@@ -4,12 +4,12 @@ A bash script that exports AWS VPC route table information to CSV format for eas
 
 ## Overview
 
-This script retrieves all VPC route tables from your current AWS region and exports the information to a CSV file. It provides a comprehensive view of your VPC routing configuration including VPC details, route table information, and individual route entries.
+This script retrieves all VPC route tables from your current AWS environment and exports the information to a CSV file. It provides a comprehensive view of your VPC routing configuration including VPC details, route table information, and individual route entries.
 
 ## Features
 
 - Exports VPC and route table data to CSV format
-- Handles multiple VPCs and route tables in a single region
+- Handles multiple VPCs and route tables
 - Includes VPC names and route table names (from tags)
 - Captures all route destinations, targets, and states
 - Handles edge cases (no VPCs, no route tables, no routes)
@@ -57,8 +57,8 @@ Run the script from the command line:
 ```
 
 The script will:
-1. Use your current AWS CLI region configuration
-2. Query all VPCs in that region
+1. Use your current AWS CLI configuration
+2. Query all VPCs in your environment
 3. For each VPC, retrieve all associated route tables
 4. For each route table, extract all route entries
 5. Export everything to `vpc_route_tables.csv`
@@ -69,7 +69,6 @@ The generated CSV file contains the following columns:
 
 | Column | Description |
 |--------|-------------|
-| Region | AWS region where the VPC is located |
 | VPC_ID | VPC identifier |
 | VPC_Name | VPC name from the 'Name' tag |
 | CIDR_Block | VPC CIDR block |
@@ -82,24 +81,21 @@ The generated CSV file contains the following columns:
 ## Example Output
 
 ```csv
-Region,VPC_ID,VPC_Name,CIDR_Block,Route_Table_ID,Route_Table_Name,Destination_CIDR,Target,State
-us-east-1,vpc-12345678,Production VPC,10.0.0.0/16,rtb-87654321,Main Route Table,10.0.0.0/16,local,active
-us-east-1,vpc-12345678,Production VPC,10.0.0.0/16,rtb-87654321,Main Route Table,0.0.0.0/0,igw-abcdef12,active
+VPC_ID,VPC_Name,CIDR_Block,Route_Table_ID,Route_Table_Name,Destination_CIDR,Target,State
+vpc-12345678,Production VPC,10.0.0.0/16,rtb-87654321,Main Route Table,10.0.0.0/16,local,active
+vpc-12345678,Production VPC,10.0.0.0/16,rtb-87654321,Main Route Table,0.0.0.0/0,igw-abcdef12,active
 ```
 
 ## Configuration
 
 The script uses your current AWS CLI configuration:
 
-- **Region**: Uses `aws configure get region`
 - **Credentials**: Uses your default AWS CLI profile
+- **Region**: Uses your current AWS CLI region setting
 
-To use a different region or profile:
+To use a different profile:
 
 ```bash
-# Set different region
-export AWS_DEFAULT_REGION=us-west-2
-
 # Use different profile
 export AWS_PROFILE=my-profile
 
@@ -111,7 +107,7 @@ export AWS_PROFILE=my-profile
 
 The script handles various scenarios:
 
-- **No VPCs found**: Creates a CSV entry indicating no VPCs in the region
+- **No VPCs found**: Creates a CSV entry indicating no VPCs found
 - **No route tables**: Indicates when a VPC has no route tables
 - **No routes**: Shows when a route table has no route entries
 - **Missing names**: Uses "No Name" for resources without Name tags
@@ -137,8 +133,8 @@ The script handles various scenarios:
    ```
 
 4. **No output or empty CSV**:
-   - Check your AWS region configuration
-   - Verify you have VPCs in the current region
+   - Check your AWS CLI configuration
+   - Verify you have VPCs in your current environment
    - Ensure proper IAM permissions
 
 ### Debug Mode
